@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototipo - Lista com Paginação</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #333;
+            padding-top: 20px;
+            overflow-x: hidden;
+            color: white;
+        }
+
+        .sidebar img {
+            display: block;
+            margin: 0 auto;
+            width: 80%;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #575757;
+            display: block;
+        }
+
+        #main-content {
+            margin-left: 250px;
+            padding: 20px;
+            width: 100%;
+        }
+
+        #data-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #data-list li {
+            padding: 10px;
+            background-color: #f4f4f4;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .status-1 { background-color: green; }
+        .status-2 { background-color: yellowgreen; }
+        .status-3 { background-color: yellow; }
+        .status-4 { background-color: orange; }
+        .status-5 { background-color: red; }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination button {
+            padding: 10px;
+            margin: 5px;
+            border: none;
+            background-color: #333;
+            color: white;
+            cursor: pointer;
+        }
+
+        .pagination button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <img src="assets/sinergiza.png" alt="Logo Sinergiza">
+        <ul>
+            <li><a href="#">Opção 1</a></li>
+            <li><a href="#">Opção 2</a></li>
+            <li><a href="#">Opção 3</a></li>
+        </ul>
+    </div>
+
+    <div id="main-content">
+        <h1>Lista de Dados com Paginação</h1>
+        <ul id="data-list">
+            <!-- A lista será preenchida pelo JavaScript -->
+        </ul>
+
+        <div class="pagination">
+            <button id="prev-btn" onclick="prevPage()">Anterior</button>
+            <button id="next-btn" onclick="nextPage()">Próxima</button>
+        </div>
+    </div>
+
+    <script>
+        const totalItems = 200; // Número total de itens (exemplo)
+        const itemsPerPage = 30; // Limite de itens por página
+        let currentPage = 1; // Página atual
+
+        // Função para gerar um número aleatório entre min e max
+        function getRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // Função para gerar a lista de itens com números e status aleatórios
+        function generateList(page) {
+            const dataList = document.getElementById('data-list');
+            dataList.innerHTML = ''; // Limpa a lista atual
+
+            // Calcula o índice inicial e final dos itens da página atual
+            const startItem = (page - 1) * itemsPerPage;
+            const endItem = Math.min(startItem + itemsPerPage, totalItems);
+
+            for (let i = startItem; i < endItem; i++) {
+                const randomNumber = getRandomNumber(100000, 999999);
+                const status = getRandomNumber(1, 5);
+
+                // Cria um item da lista
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    ${randomNumber}
+                    <span class="status status-${status}">Status ${status}</span>
+                `;
+
+                // Adiciona o item na lista
+                dataList.appendChild(listItem);
+            }
+
+            // Atualiza o estado dos botões de paginação
+            updatePaginationButtons();
+        }
+
+        // Função para atualizar os botões de paginação
+        function updatePaginationButtons() {
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+
+            // Desabilita o botão "Anterior" se estiver na primeira página
+            if (currentPage === 1) {
+                prevBtn.disabled = true;
+            } else {
+                prevBtn.disabled = false;
+            }
+
+            // Desabilita o botão "Próxima" se estiver na última página
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            if (currentPage === totalPages) {
+                nextBtn.disabled = true;
+            } else {
+                nextBtn.disabled = false;
+            }
+        }
+
+        // Função para ir para a página anterior
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                generateList(currentPage);
+            }
+        }
+
+        // Função para ir para a próxima página
+        function nextPage() {
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                generateList(currentPage);
+            }
+        }
+
+        // Gera a lista da primeira página quando a página carrega
+        window.onload = function() {
+            generateList(currentPage);
+        };
+    </script>
+</body>
+</html>
