@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prototipo - Lista com Paginação</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@400;700&display=swap');
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
             display: flex;
@@ -18,10 +20,11 @@
             position: fixed;
             top: 0;
             left: 0;
-            background-color: #333;
+            background-color: #E0F7E7;
             padding-top: 20px;
             overflow-x: hidden;
-            color: white;
+            color: black;
+            font-family: 'Montserrat', sans-serif;
         }
 
         .sidebar img {
@@ -41,12 +44,13 @@
         }
 
         .sidebar ul li a {
-            color: white;
+            color: black;
             text-decoration: none;
         }
 
         .sidebar ul li a:hover {
             background-color: #575757;
+            color: white;
             display: block;
         }
 
@@ -54,6 +58,7 @@
             margin-left: 250px;
             padding: 20px;
             width: 100%;
+            font-family: 'Roboto', sans-serif;
         }
 
         #data-list {
@@ -74,15 +79,15 @@
         .status {
             padding: 5px 10px;
             border-radius: 5px;
-            color: white;
             font-weight: bold;
+            color: #fff; /* Cor branca para alto contraste */
         }
 
-        .status-1 { background-color: green; }
-        .status-2 { background-color: yellowgreen; }
-        .status-3 { background-color: yellow; }
-        .status-4 { background-color: orange; }
-        .status-5 { background-color: red; }
+        .status-1 { background-color: #006400; } /* Verde escuro */
+        .status-2 { background-color: #228B22; } /* Verde médio */
+        .status-3 { background-color: #FFEB3B; color: #000; } /* Amarelo WCAG */
+        .status-4 { background-color: #FF8C00; } /* Laranja forte */
+        .status-5 { background-color: #D32F2F; } /* Vermelho escuro */
 
         .pagination {
             display: flex;
@@ -131,18 +136,16 @@
         const totalItems = 200; // Número total de itens (exemplo)
         const itemsPerPage = 30; // Limite de itens por página
         let currentPage = 1; // Página atual
+        const maxPages = 5; // Limite de páginas na paginação
 
-        // Função para gerar um número aleatório entre min e max
         function getRandomNumber(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
-        // Função para gerar a lista de itens com números e status aleatórios
         function generateList(page) {
             const dataList = document.getElementById('data-list');
-            dataList.innerHTML = ''; // Limpa a lista atual
+            dataList.innerHTML = ''; 
 
-            // Calcula o índice inicial e final dos itens da página atual
             const startItem = (page - 1) * itemsPerPage;
             const endItem = Math.min(startItem + itemsPerPage, totalItems);
 
@@ -150,43 +153,27 @@
                 const randomNumber = getRandomNumber(100000, 999999);
                 const status = getRandomNumber(1, 5);
 
-                // Cria um item da lista
                 const listItem = document.createElement('li');
                 listItem.innerHTML = `
                     ${randomNumber}
                     <span class="status status-${status}">Status ${status}</span>
                 `;
 
-                // Adiciona o item na lista
                 dataList.appendChild(listItem);
             }
 
-            // Atualiza o estado dos botões de paginação
             updatePaginationButtons();
         }
 
-        // Função para atualizar os botões de paginação
         function updatePaginationButtons() {
             const prevBtn = document.getElementById('prev-btn');
             const nextBtn = document.getElementById('next-btn');
-
-            // Desabilita o botão "Anterior" se estiver na primeira página
-            if (currentPage === 1) {
-                prevBtn.disabled = true;
-            } else {
-                prevBtn.disabled = false;
-            }
-
-            // Desabilita o botão "Próxima" se estiver na última página
             const totalPages = Math.ceil(totalItems / itemsPerPage);
-            if (currentPage === totalPages) {
-                nextBtn.disabled = true;
-            } else {
-                nextBtn.disabled = false;
-            }
+
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages || currentPage >= maxPages;
         }
 
-        // Função para ir para a página anterior
         function prevPage() {
             if (currentPage > 1) {
                 currentPage--;
@@ -194,16 +181,14 @@
             }
         }
 
-        // Função para ir para a próxima página
         function nextPage() {
             const totalPages = Math.ceil(totalItems / itemsPerPage);
-            if (currentPage < totalPages) {
+            if (currentPage < totalPages && currentPage < maxPages) {
                 currentPage++;
                 generateList(currentPage);
             }
         }
 
-        // Gera a lista da primeira página quando a página carrega
         window.onload = function() {
             generateList(currentPage);
         };
