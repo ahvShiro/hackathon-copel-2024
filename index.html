@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Protótipo - Lista com Paginação</title>
+    <title>Prototipo - Lista com Gráfico</title>
     <style>
-        /* Mantendo o estilo anterior */
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@400;700&display=swap');
 
         * {
@@ -17,6 +17,8 @@
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f4f6f8;
+            margin: 0;
+            padding: 0;
             display: flex;
             height: 100vh;
         }
@@ -36,15 +38,14 @@
         }
 
         .sidebar img {
-            width: 200px;
-            margin: 0 auto;
+            width: 100%;
+            margin: 0 auto 20px;
             display: block;
         }
 
         .sidebar ul {
             list-style-type: none;
             padding: 0;
-            margin-top: 20px;
         }
 
         .sidebar ul li {
@@ -70,11 +71,15 @@
 
         #main-content {
             margin-left: 250px;
-            padding: 40px;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
             width: calc(100% - 250px);
             background-color: #f4f6f8;
-            border-radius: 12px;
-            margin-top: 20px;
+        }
+
+        .list-container {
+            width: 50%;
         }
 
         h1 {
@@ -99,7 +104,6 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
         }
 
         .status {
@@ -108,129 +112,136 @@
             font-weight: bold;
             color: #fff;
             font-size: 14px;
+            display: inline-block;
+            min-width: 50px;
+            text-align: center;
         }
 
-        .status-1 { background-color: #388E3C; }
-        .status-2 { background-color: #8BC34A; }
-        .status-3 { background-color: #FFEB3B; color: #000; }
-        .status-4 { background-color: #FF9800; }
-        .status-5 { background-color: #D32F2F; }
-
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
+        .status-1 {
+            background-color: #d4fa00;
+            color: #000;
         }
 
-        .pagination button {
-            padding: 12px 20px;
-            margin: 5px;
-            border: none;
-            background-color: #388E3C;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
+        .status-2 {
+            background-color: #FFEB3B;
+            color: #000;
         }
 
-        .pagination button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
+        .status-3 {
+            background-color: #FF9800;
+            color: #000;
         }
 
-        .pagination button:hover:not(:disabled) {
-            background-color: #2E7D32;
+        .status-4 {
+            background-color: #fa4b00;
+        }
+
+        .status-5 {
+            background-color: #D32F2F;
+        }
+
+        .chart-container {
+            width: 50%;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-container h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: #388E3C;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        canvas {
+            width: 100%;
+            height: 300px;
         }
     </style>
 </head>
+
 <body>
     <div class="sidebar">
         <img src="assets/sinergiza.png" alt="Logo Sinergiza">
         <ul>
             <li><a href="#">Listas de Dados</a></li>
+            <li><a href="#">Exportar Relatório</a></li>
         </ul>
     </div>
 
     <div id="main-content">
-        <h1>Lista de Dados com Paginação</h1>
-        <ul id="data-list">
-            <!-- A lista será preenchida pelo JavaScript -->
-        </ul>
+        <div class="list-container">
+            <h1>Lista de Árvores</h1>
+            <ul id="data-list">
+                <!-- A lista será preenchida pelo JavaScript -->
+            </ul>
+        </div>
 
-        <div class="pagination">
-            <button id="prev-btn" onclick="prevPage()">Anterior</button>
-            <button id="next-btn" onclick="nextPage()">Próxima</button>
+        <div class="chart-container">
+            <h2>Análise de Risco</h2>
+            <canvas id="riskChart"></canvas>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        const totalItems = 200; 
-        const itemsPerPage = 30; 
-        let currentPage = 1; 
-        const maxPages = 5; 
+        const totalItems = 20; // Número de itens de exemplo
+        let currentPage = 1;
 
         function getRandomNumber(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
-        function generateList(page) {
+        function generateList() {
             const dataList = document.getElementById('data-list');
-            dataList.innerHTML = ''; 
+            dataList.innerHTML = ''; // Limpa a lista
 
-            const startItem = (page - 1) * itemsPerPage;
-            const endItem = Math.min(startItem + itemsPerPage, totalItems);
-
-            for (let i = startItem; i < endItem; i++) {
-                const randomNumber = getRandomNumber(100000, 999999);
-                const randomStreetNumber = getRandomNumber(1, 100);
+            for (let i = 0; i < totalItems; i++) {
+                const randomId = getRandomNumber(100000, 999999);
                 const status = getRandomNumber(1, 5);
+                const addedDate = new Date().toLocaleDateString();
 
                 const listItem = document.createElement('li');
                 listItem.innerHTML = `
-                    <div>
-                        <strong>${randomNumber}</strong>
-                        <p>Localização: Rua ${randomStreetNumber}</p>
-                        <div class="status status-${status}">${status}</div>
-                    </div>
+                    <span>ID: ${randomId}</span>
+                    <span>Data: ${addedDate}</span>
+                    <span class="status status-${status}">${status}</span>
                 `;
-                
-                // Evento de clique redirecionando para a página de detalhes
-                listItem.onclick = function() {
-                    window.location.href = `detalhes.html?id=${randomNumber}&streetNumber=${randomStreetNumber}&status=${status}`;
-                };
-
                 dataList.appendChild(listItem);
             }
-
-            updatePaginationButtons();
         }
 
-        function updatePaginationButtons() {
-            const prevBtn = document.getElementById('prev-btn');
-            const nextBtn = document.getElementById('next-btn');
-            const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-            prevBtn.disabled = currentPage === 1;
-            nextBtn.disabled = currentPage === totalPages || currentPage >= maxPages;
+        // Gera o gráfico
+        function generateChart() {
+            const ctx = document.getElementById('riskChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Árvores em Risco 1', 'Árvores em Risco 2', 'Árvores em Risco 3', 'Árvores em Risco 4', 'Árvores em Risco 5'],
+                    datasets: [{
+                        label: 'Quantidade',
+                        data: [getRandomNumber(5, 20), getRandomNumber(5, 20), getRandomNumber(5, 20), getRandomNumber(5, 20), getRandomNumber(5, 20)],
+                        backgroundColor: ['#d4fa00', '#FFEB3B', '#FF9800', '#fa4b00', '#D32F2F'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
         }
 
-        function prevPage() {
-            if (currentPage > 1) {
-                currentPage--;
-                generateList(currentPage);
-            }
-        }
-
-        function nextPage() {
-            if (currentPage < maxPages) {
-                currentPage++;
-                generateList(currentPage);
-            }
-        }
-
-        // Gera a lista na página inicial
-        generateList(currentPage);
+        window.onload = function () {
+            generateList();
+            generateChart();
+        };
     </script>
 </body>
+
 </html>
