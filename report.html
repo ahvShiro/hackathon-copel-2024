@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório da Árvore</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f6f8;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #388E3C;
+        }
+
+        .report-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .tree-info {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Relatório da Árvore</h1>
+    <div class="report-container">
+        <div class="tree-info">
+            <p><strong>ID da Árvore:</strong> <span id="treeId"></span></p>
+            <p><strong>Endereço:</strong> <span id="treeAddress"></span></p>
+            <p><strong>Data de Plantio:</strong> <span id="plantDate"></span></p>
+            <p><strong>Status de Risco:</strong> <span id="riskStatus"></span></p>
+        </div>
+        <img id="treeImage" src="" alt="Imagem aérea da árvore" width="500px" />
+    </div>
+
+    <script>
+        // Função para pegar os parâmetros da URL
+        function getQueryParams() {
+            const params = {};
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            params['id'] = urlParams.get('id');
+            return params;
+        }
+
+        // Dados da árvore com base no ID
+        const treeData = {
+            '100001': {
+                address: 'Rua A, 123, Bairro XYZ',
+                plantDate: '15/04/1998',
+                riskStatus: '3',
+                imageUrl: 'path_to_image_1.jpg'
+            },
+            '100002': {
+                address: 'Avenida B, 456, Bairro ABC',
+                plantDate: '20/06/2002',
+                riskStatus: '5',
+                imageUrl: 'path_to_image_2.jpg'
+            },
+            // Adicione mais árvores conforme necessário
+        };
+
+        // Função para preencher os dados da árvore com base no ID
+        function populateReport() {
+            const params = getQueryParams();
+            const treeId = params['id'];
+
+            if (treeData[treeId]) {
+                document.getElementById('treeId').innerText = treeId;
+                document.getElementById('treeAddress').innerText = treeData[treeId].address;
+                document.getElementById('plantDate').innerText = treeData[treeId].plantDate;
+                document.getElementById('riskStatus').innerText = treeData[treeId].riskStatus;
+                document.getElementById('treeImage').src = treeData[treeId].imageUrl;
+            } else {
+                document.getElementById('treeId').innerText = 'Árvore não encontrada';
+            }
+        }
+
+        // Chama a função ao carregar a página
+        window.onload = populateReport;
+    </script>
+</body>
+</html>
