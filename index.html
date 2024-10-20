@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prototipo - Lista com Paginação</title>
+    <title>Protótipo - Lista com Paginação</title>
     <style>
+        /* Mantendo o estilo anterior */
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@400;700&display=swap');
 
-        /* Reset básico */
         * {
             margin: 0;
             padding: 0;
@@ -17,29 +17,26 @@
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f4f6f8;
-            margin: 0;
-            padding: 0;
             display: flex;
             height: 100vh;
         }
 
-        /* Estilos da barra lateral */
         .sidebar {
             height: 100%;
             width: 250px;
             position: fixed;
             top: 0;
             left: 0;
-            background-color: #F0F8F6; /* Verde claro */
+            background-color: #92e5b5;
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: flex-start;
             padding: 20px;
         }
 
         .sidebar img {
-            width: 80%;
+            width: 200px;
             margin: 0 auto;
             display: block;
         }
@@ -47,11 +44,11 @@
         .sidebar ul {
             list-style-type: none;
             padding: 0;
-            margin-top: 30px;
+            margin-top: 20px;
         }
 
         .sidebar ul li {
-            margin: 20px 0;
+            margin: 10px 0;
             text-align: center;
         }
 
@@ -67,24 +64,22 @@
         }
 
         .sidebar ul li a:hover {
-            background-color: #388E3C; /* Verde escuro */
+            background-color: #388E3C;
             color: #fff;
         }
 
-        /* Estilos do conteúdo principal */
         #main-content {
             margin-left: 250px;
             padding: 40px;
             width: calc(100% - 250px);
-            background-color: #fff;
+            background-color: #f4f6f8;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             margin-top: 20px;
         }
 
         h1 {
             font-family: 'Montserrat', sans-serif;
-            color: #388E3C; /* Verde escuro */
+            color: #388E3C;
             font-size: 28px;
             margin-bottom: 20px;
         }
@@ -104,6 +99,7 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
         }
 
         .status {
@@ -114,11 +110,11 @@
             font-size: 14px;
         }
 
-        .status-1 { background-color: #388E3C; } /* Verde escuro */
-        .status-2 { background-color: #8BC34A; } /* Verde médio */
-        .status-3 { background-color: #FFEB3B; color: #000; } /* Amarelo */
-        .status-4 { background-color: #FF9800; } /* Laranja */
-        .status-5 { background-color: #D32F2F; } /* Vermelho escuro */
+        .status-1 { background-color: #388E3C; }
+        .status-2 { background-color: #8BC34A; }
+        .status-3 { background-color: #FFEB3B; color: #000; }
+        .status-4 { background-color: #FF9800; }
+        .status-5 { background-color: #D32F2F; }
 
         .pagination {
             display: flex;
@@ -130,7 +126,7 @@
             padding: 12px 20px;
             margin: 5px;
             border: none;
-            background-color: #388E3C; /* Verde escuro */
+            background-color: #388E3C;
             color: white;
             font-size: 16px;
             cursor: pointer;
@@ -144,7 +140,7 @@
         }
 
         .pagination button:hover:not(:disabled) {
-            background-color: #2E7D32; /* Verde um pouco mais escuro */
+            background-color: #2E7D32;
         }
     </style>
 </head>
@@ -169,10 +165,10 @@
     </div>
 
     <script>
-        const totalItems = 200; // Número total de itens (exemplo)
-        const itemsPerPage = 30; // Limite de itens por página
-        let currentPage = 1; // Página atual
-        const maxPages = 5; // Limite de páginas na paginação
+        const totalItems = 200; 
+        const itemsPerPage = 30; 
+        let currentPage = 1; 
+        const maxPages = 5; 
 
         function getRandomNumber(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -187,13 +183,22 @@
 
             for (let i = startItem; i < endItem; i++) {
                 const randomNumber = getRandomNumber(100000, 999999);
+                const randomStreetNumber = getRandomNumber(1, 100);
                 const status = getRandomNumber(1, 5);
 
                 const listItem = document.createElement('li');
                 listItem.innerHTML = `
-                    ${randomNumber}
-                    <span class="status status-${status}">Status ${status}</span>
+                    <div>
+                        <strong>${randomNumber}</strong>
+                        <p>Localização: Rua ${randomStreetNumber}</p>
+                        <div class="status status-${status}">${status}</div>
+                    </div>
                 `;
+                
+                // Evento de clique redirecionando para a página de detalhes
+                listItem.onclick = function() {
+                    window.location.href = `detalhes.html?id=${randomNumber}&streetNumber=${randomStreetNumber}&status=${status}`;
+                };
 
                 dataList.appendChild(listItem);
             }
@@ -218,16 +223,14 @@
         }
 
         function nextPage() {
-            const totalPages = Math.ceil(totalItems / itemsPerPage);
-            if (currentPage < totalPages && currentPage < maxPages) {
+            if (currentPage < maxPages) {
                 currentPage++;
                 generateList(currentPage);
             }
         }
 
-        window.onload = function() {
-            generateList(currentPage);
-        };
+        // Gera a lista na página inicial
+        generateList(currentPage);
     </script>
 </body>
 </html>
