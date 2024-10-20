@@ -4,86 +4,367 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Relatório da Árvore</title>
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f4f6f8;
-            padding: 20px;
-        }
-
-        h1 {
-            color: #388E3C;
-        }
-
-        .report-container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .tree-info {
-            margin-bottom: 20px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Relatório da Árvore</h1>
-    <div class="report-container">
-        <div class="tree-info">
-            <p><strong>ID da Árvore:</strong> <span id="treeId"></span></p>
-            <p><strong>Endereço:</strong> <span id="treeAddress"></span></p>
-            <p><strong>Data de Plantio:</strong> <span id="plantDate"></span></p>
-            <p><strong>Status de Risco:</strong> <span id="riskStatus"></span></p>
-        </div>
-        <img id="treeImage" src="" alt="Imagem aérea da árvore" width="500px" />
-    </div>
-
-    <script>
-        // Função para pegar os parâmetros da URL
-        function getQueryParams() {
-            const params = {};
-            const queryString = window.location.search;
-            const urlParams = new URLSearchParams(queryString);
-            params['id'] = urlParams.get('id');
-            return params;
-        }
-
-        // Dados da árvore com base no ID
-        const treeData = {
-            '100001': {
-                address: 'Rua A, 123, Bairro XYZ',
-                plantDate: '15/04/1998',
-                riskStatus: '3',
-                imageUrl: 'path_to_image_1.jpg'
-            },
-            '100002': {
-                address: 'Avenida B, 456, Bairro ABC',
-                plantDate: '20/06/2002',
-                riskStatus: '5',
-                imageUrl: 'path_to_image_2.jpg'
-            },
-            // Adicione mais árvores conforme necessário
-        };
-
-        // Função para preencher os dados da árvore com base no ID
-        function populateReport() {
-            const params = getQueryParams();
-            const treeId = params['id'];
-
-            if (treeData[treeId]) {
-                document.getElementById('treeId').innerText = treeId;
-                document.getElementById('treeAddress').innerText = treeData[treeId].address;
-                document.getElementById('plantDate').innerText = treeData[treeId].plantDate;
-                document.getElementById('riskStatus').innerText = treeData[treeId].riskStatus;
-                document.getElementById('treeImage').src = treeData[treeId].imageUrl;
-            } else {
-                document.getElementById('treeId').innerText = 'Árvore não encontrada';
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Sinergiza</title>
+        <link rel="icon" href="assets/sinergiza.png" type="image/x-icon">
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@400;700&display=swap');
+    
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
             }
-        }
-
-        // Chama a função ao carregar a página
-        window.onload = populateReport;
-    </script>
-</body>
-</html>
+    
+            body {
+                font-family: 'Roboto', sans-serif;
+                background-color: #f4f6f8;
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+            }
+    
+            .navbar {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background-color: #92e5b5;
+                padding: 10px 30px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                position: relative;
+                z-index: 1;
+            }
+    
+            .navbar img {
+                height: 40px;
+            }
+    
+            .navbar .search-bar {
+                display: flex;
+                align-items: center;
+            }
+    
+            .navbar input[type="text"] {
+                padding: 8px;
+                border: 1px solid #ddd;
+                border-radius: 20px;
+                margin-right: 10px;
+            }
+    
+            .navbar button {
+                padding: 8px 12px;
+                background-color: #388E3C;
+                color: #fff;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+    
+            .navbar button:hover {
+                background-color: #2e7d32;
+            }
+    
+            .sidebar {
+                height: calc(100% - 60px);
+                width: 250px;
+                position: fixed;
+                top: 60px;
+                left: 0;
+                background-color: #caead7;
+                box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                padding: 20px;
+            }
+    
+            .sidebar ul {
+                list-style-type: none;
+                padding: 0;
+            }
+    
+            .sidebar ul li {
+                margin: 10px 0;
+                text-align: center;
+            }
+    
+            .sidebar ul li a {
+                color: #3A3A3A;
+                text-decoration: none;
+                font-size: 18px;
+                font-family: 'Montserrat', sans-serif;
+                padding: 10px;
+                display: block;
+                border-radius: 8px;
+                transition: background-color 0.3s ease, color 0.3s ease;
+            }
+    
+            .sidebar ul li a:hover {
+                background-color: #388E3C;
+                color: #fff;
+            }
+    
+            #main-content {
+                margin-left: 270px;
+                padding: 20px;
+                display: flex;
+                gap: 20px;
+                width: calc(100% - 270px);
+                background-color: #f4f6f8;
+                height: calc(100% - 60px);
+                overflow: auto;
+            }
+    
+            .card {
+                background-color: #fff;
+                padding: 20px;
+                border-radius: 12px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+            }
+    
+            .list-container {
+                width: 50%;
+            }
+    
+            h1,
+            h2 {
+                font-family: 'Montserrat', sans-serif;
+                color: #388E3C;
+                font-size: 28px;
+                margin-bottom: 20px;
+            }
+    
+            #data-list {
+                list-style-type: none;
+                padding: 0;
+            }
+    
+            #data-list li {
+                padding: 15px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid #ddd;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+    
+            #data-list li:hover {
+                background-color: #caead7;
+            }
+    
+            #data-list li:active {
+                background-color: #92e5b5;
+            }
+    
+            .status {
+                padding: 8px 12px;
+                border-radius: 8px;
+                font-weight: bold;
+                color: #fff;
+                font-size: 14px;
+                display: inline-block;
+                min-width: 50px;
+                text-align: center;
+            }
+    
+            .status-1 {
+                background-color: #d4fa00;
+                color: #000;
+            }
+    
+            .status-2 {
+                background-color: #FFEB3B;
+                color: #000;
+            }
+    
+            .status-3 {
+                background-color: #FF9800;
+                color: #000;
+            }
+    
+            .status-4 {
+                background-color: #fa4b00;
+            }
+    
+            .status-5 {
+                background-color: #D32F2F;
+            }
+    
+            .chart-container {
+                width: 400px;
+                height: 300px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+            }
+    
+            .chart-container canvas {
+                width: 100%;
+                height: 200px;
+            }
+    
+            .pagination {
+                display: flex;
+                justify-content: flex-end;
+                margin-top: 20px;
+            }
+    
+            .pagination button {
+                padding: 8px 12px;
+                border: 1px solid #388E3C;
+                background-color: #fff;
+                color: #388E3C;
+                border-radius: 4px;
+                cursor: pointer;
+                margin-left: 5px;
+                transition: background-color 0.3s ease, color 0.3s ease;
+            }
+    
+            .pagination button:hover {
+                background-color: #388E3C;
+                color: #fff;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <div class="navbar">
+            <img src="assets/sinergiza.png" alt="Logo Sinergiza">
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar...">
+                <button>Login</button>
+            </div>
+        </div>
+    
+        <div class="sidebar">
+            <ul>
+                <li><a href="#">Listas de Dados</a></li>
+                <li><a href="#">Exportar Relatório</a></li>
+            </ul>
+        </div>
+    
+        <div id="main-content">
+            <div class="list-container">
+                <h1>Lista de Árvores</h1>
+                <ul id="data-list" class="card">
+                    <!-- A lista será preenchida pelo JavaScript -->
+                </ul>
+                <div class="pagination">
+                    <button onclick="prevPage()">Anterior</button>
+                    <button onclick="nextPage()">Próximo</button>
+                </div>
+            </div>
+    
+            <div class="chart-container card">
+                <h2>Análise de Risco</h2>
+                <canvas id="riskChart"></canvas>
+            </div>
+        </div>
+    
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const totalItems = 100;
+            const itemsPerPage = 20;
+            let currentPage = 1;
+    
+            // Array para armazenar os dados
+            const items = [];
+            const usedIds = new Set(); // Para garantir IDs únicos
+    
+            // Função para gerar IDs de 6 dígitos únicos
+            function generateUniqueId() {
+                let id;
+                do {
+                    id = Math.floor(100000 + Math.random() * 900000); // Gera um número entre 100000 e 999999
+                } while (usedIds.has(id)); // Garante que o ID não foi usado antes
+                usedIds.add(id);
+                return id;
+            }
+    
+            // Preenche a array com valores aleatórios
+            for (let i = 0; i < totalItems; i++) {
+                items.push({
+                    id: generateUniqueId(),
+                    status: Math.floor(Math.random() * 5) + 1,
+                    date: new Date().toLocaleDateString()
+                });
+            }
+    
+            function generateList() {
+                // Ordena os itens em ordem decrescente de status
+                items.sort((a, b) => b.status - a.status);
+    
+                const dataList = document.getElementById('data-list');
+                dataList.innerHTML = '';
+    
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+    
+                for (let i = startIndex; i < endIndex && i < totalItems; i++) {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `
+                        <span>CAF: ${items[i].id}</span>
+                        <span>Data: ${items[i].date}</span>
+                        <span class="status status-${items[i].status}">${items[i].status}</span>
+                    `;
+                    listItem.addEventListener('click', () => openReport(items[i].id));
+                    dataList.appendChild(listItem);
+                }
+            }
+    
+            function openReport(id) {
+                window.open(`report.html?id=${id}`, '_blank');
+            }
+    
+            function prevPage() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    generateList();
+                }
+            }
+    
+            function nextPage() {
+                if (currentPage * itemsPerPage < totalItems) {
+                    currentPage++;
+                    generateList();
+                }
+            }
+    
+            function generateChart() {
+                const ctx = document.getElementById('riskChart').getContext('2d');
+                const statusCounts = [0, 0, 0, 0, 0];
+    
+                items.forEach(item => {
+                    statusCounts[item.status - 1]++;
+                });
+    
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['1', '2', '3', '4', '5'],
+                        datasets: [{
+                            label: 'Quantidade de Árvores por Status',
+                            data: statusCounts,
+                            backgroundColor: ['#d4fa00', '#FFEB3B', '#FF9800', '#fa4b00', '#D32F2F']
+                        }]
+                    }
+                });
+            }
+    
+            // Gera a lista e o gráfico ao carregar a página
+            generateList();
+            generateChart();
+        </script>
+    </body>
+    
+    </html>
+    
