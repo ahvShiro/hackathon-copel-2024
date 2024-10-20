@@ -114,59 +114,54 @@
         }
 
         .report-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
             background-color: #fff;
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
+            position: relative;
         }
 
-        h1 {
-            font-family: 'Montserrat', sans-serif;
-            color: #388E3C;
-            font-size: 28px;
-            margin-bottom: 20px;
-        }
-
-        p {
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-
-        .report-detail {
-            margin-top: 20px;
-        }
-
-        .report-detail h2 {
-            font-family: 'Montserrat', sans-serif;
-            color: #388E3C;
-            font-size: 22px;
-            margin-bottom: 10px;
-        }
-
-        .report-detail p {
-            font-size: 16px;
-            color: #3A3A3A;
-            margin-bottom: 15px;
+        .report-details {
+            flex: 1;
+            margin-left: 20px;
         }
 
         .image-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 20px;
+            flex: 0 0 150px; /* Ajuste o tamanho conforme necessário */
+            position: relative;
         }
 
         .image-container img {
             max-width: 100%;
+            height: auto;
             border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .print-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #388E3C;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .print-button:hover {
+            background-color: #2e7d32;
         }
     </style>
 </head>
 
 <body>
     <div class="navbar">
-        <img src="assets/sinergiza.png" alt="Logo Sinergiza">
+        <img src="../assets/sinergiza.png" alt="Logo Sinergiza">
         <div class="search-bar">
             <input type="text" placeholder="Buscar...">
             <button>Login</button>
@@ -175,7 +170,8 @@
 
     <div class="sidebar">
         <ul>
-            <li><a href="#">Listas de Dados</a></li>
+            <li><a href="../index.html">Listas de Dados</a></li>
+            <li><a href="#">Exportar Relatório</a></li>
             <li><a href="#">Mapa</a></li>
             <li><a href="#">Configurações</a></li>
             <li><a href="#">Suporte</a></li>
@@ -184,27 +180,30 @@
 
     <div id="main-content">
         <div class="report-container">
-            <h1>Relatório da Árvore</h1>
-            <p>ID da Árvore: <span id="tree-id">123456</span></p>
-            <p>Data Adicionada: <span id="tree-date">20/10/2024</span></p>
-            <p>Status: <span id="tree-status" class="status status-4">4</span></p>
-
-            <div class="report-detail">
-                <h2>Detalhes da Localização</h2>
-                <p>Endereço: Rua Exemplo, 123 - Curitiba, PR</p>
-                <p>Latitude: -25.4284</p>
-                <p>Longitude: -49.2733</p>
-            </div>
-
             <div class="image-container">
-                <img id="tree-image" src="assets/arvore-exemplo.jpg" alt="Imagem Aérea da Árvore">
+                <img id="tree-image" src="" alt="Imagem da Árvore">
             </div>
+            <div class="report-details">
+                <h1>Relatório da Árvore</h1>
+                <p>ID da Árvore: <span id="tree-id"></span></p>
+                <p>Data Adicionada: <span id="tree-date"></span></p>
+                <p>Status: <span id="tree-status" class="status"></span></p>
 
-            <div class="report-detail">
-                <h2>Informações Adicionais</h2>
-                <p>Data de Plantio: 12/03/2000</p>
-                <p>Altura: 15 metros</p>
-                <p>Proximidade de Linha de Energia: 2 metros</p>
+                <div class="report-detail">
+                    <h2>Detalhes da Localização</h2>
+                    <p>Endereço: Rua Exemplo, 123 - Curitiba, PR</p>
+                    <p>Latitude: -25.4284</p>
+                    <p>Longitude: -49.2733</p>
+                </div>
+
+                <div class="report-detail">
+                    <h2>Informações Adicionais</h2>
+                    <p>Data de Plantio: 12/03/2000</p>
+                    <p>Altura: 15 metros</p>
+                    <p>Proximidade de Linha de Energia: 2 metros</p>
+                </div>
+
+                <a href="Relatórioenergiza-1.pdf" class="print-button" target="_blank">Imprimir Relatório</a>
             </div>
         </div>
     </div>
@@ -223,7 +222,7 @@
         // Função para selecionar uma imagem aleatória
         function getRandomImage() {
             const randomIndex = Math.floor(Math.random() * 13) + 1; // Gera um número entre 1 e 13
-            return `assets/arvores/arvore${randomIndex}.png`;
+            return `../assets/arvores/arvore${randomIndex}.png`;
         }
 
         // Captura os parâmetros de consulta
